@@ -1,55 +1,120 @@
-import { Request, Response } from "express";
+import ExError from "../errors/customError";
+import { NextFunction, Request, Response } from "express";
 import { CustomRequest } from "../middleware/auth";
 import User from "../models/user";
 
-export const getUsersHandler = (req: any, res: Response) => {
+export const getUsersHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   User.find({})
     .select("-__v")
     .then((users) => res.send(users))
-    .catch((err) => res.status(400).send(err));
+    .catch(next);
 };
 
-export const postUsersHandler = (req: Request, res: Response) => {
+export const postUsersHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
-      const { name, about, avatar } = user;
-      res.send({ name, about, avatar });
+      /* throw new Error("Принудительная ошибка"); */
+      const { name, about, avatar, _id } = user;
+      res.send({ name, about, avatar, _id });
     })
-    .catch((err) => res.status(400).send(err));
-};
-
-export const getSingleUserHandler = (req: Request, res: Response) => {
-  User.findById(req.params.userId)
-    .select("-__v")
-    .then((user) => res.send(user))
-    .catch((err) =>
-      res.status(404).send({ message: "Запрашиваемый пользователь не найден" })
-    );
-};
-
-export const patchSingleUserHandler = (req: CustomRequest, res: Response) => {
-  const { _id } = req.user;
-  const { name, about, avatar } = req.body;
-  User.findByIdAndUpdate(_id, { name, about, avatar }, { new: true })
-    .select("-__v")
-    .then((updatedUser) => {
-      res.send(updatedUser);
-    })
-    .catch((error) => {
-      res.status(400).send(error);
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(ExError.badRequest());
+      } else {
+        next(err);
+      }
     });
 };
 
-export const patchSingleUserAvatarHandler = (req: any, res: Response) => {
-  const { _id } = req.user;
-  const { avatar } = req.body;
-  User.findByIdAndUpdate(_id, { avatar }, { new: true })
+export const getSingleUserHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  User.findById(req.params.userId)
+    .select("-__v")
+    .then((user) => {
+      /* throw new Error("Принудительная ошибка"); */
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        next(ExError.notFound("User"));
+      } else {
+        next(err);
+      }
+    });
+};
+
+export const patchSingleUserHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const _id = req.user?._id;
+  const { name, about, avatar } = req.body;
+  User.findOneAndUpdate(
+    { _id },
+    { name, about, avatar },
+    {
+      new: true,
+      runValidators: true,
+    }
+  )
     .select("-__v")
     .then((updatedUser) => {
+      if (!updatedUser) {
+        throw ExError.notFound("User");
+      }
+      /* throw new Error("Принудительная ошибка"); */
       res.send(updatedUser);
     })
-    .catch((error) => {
-      res.status(400).send(error);
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(ExError.badRequest());
+      } else {
+        next(err);
+      }
+    });
+};
+
+export const patchSingleUserAvatarHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const _id = req.user?._id;
+  const { avatar } = req.body;
+  User.findOneAndUpdate(
+    { _id },
+    { avatar },
+    {
+      new: true,
+      runValidators: true,
+    }
+  )
+    .select("-__v")
+    .then((updatedUser) => {
+      /* throw new Error("Принудительная ошибка"); */
+      if (!updatedUser) {
+        throw ExError.notFound("User");
+      }
+      res.send(updatedUser);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(ExError.badRequest());
+      } else {
+        next(err);
+      }
     });
 };

@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   avatar: {
     type: String,
+    match: /^https?:\/\/.+/,
     required: true,
   },
 });

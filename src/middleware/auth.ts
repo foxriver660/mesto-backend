@@ -6,7 +6,7 @@ export interface CustomRequest extends Request {
   };
 }
 
-const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
+const authHandler = (req: CustomRequest, res: Response, next: NextFunction) => {
   req.user = {
     _id: "648af78166ca9ebf27cc3826", // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
@@ -14,4 +14,4 @@ const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
   next();
 };
 
-export default auth;
+export default authHandler;

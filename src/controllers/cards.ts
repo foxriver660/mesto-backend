@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Card from "../models/card";
+import { CustomRequest } from "../middleware/auth";
 
 export const getCardsHandler = (req: Request, res: Response) => {
   Card.find({})
@@ -8,10 +9,10 @@ export const getCardsHandler = (req: Request, res: Response) => {
     .catch((err) => res.status(400).send(err));
 };
 
-export const postCardsHandler = (req: any, res: Response) => {
-  const { _id } = req.user;
+export const postCardsHandler = (req: CustomRequest, res: Response) => {
+  const userId = req.user?._id;
   const { name, link, owner, likes, createdAt } = req.body;
-  Card.create({ name, link, owner: _id, likes, createdAt })
+  Card.create({ name, link, owner: userId, likes, createdAt })
     .then((card) => {
       res.send(card);
     })
@@ -32,22 +33,22 @@ export const deleteCardsHandler = (req: Request, res: Response) => {
     });
 };
 
-export const putCardLikeHandler = (req: any, res: Response) => {
-  const { _id } = req.user;
+export const putCardLikeHandler = (req: CustomRequest, res: Response) => {
+  const userId = req.user?._id;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: _id } },
+    { $addToSet: { likes: userId } },
     { new: true }
   )
     .then(() => res.send("Like added"))
     .catch((err) => res.status(400).send(err));
 };
 
-export const deleteCardLikeHandler = (req: any, res: Response) => {
-  const { _id } = req.user;
+export const deleteCardLikeHandler = (req: CustomRequest, res: Response) => {
+  const userId = req.user?._id;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: _id } },
+    { $pull: { likes: userId } },
     { new: true }
   )
     .then(() => res.send("like deleted"))
