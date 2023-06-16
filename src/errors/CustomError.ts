@@ -1,5 +1,8 @@
+import { BAD_REQUEST, NOT_FOUND } from "../constants/errorsStatus";
+
 class ExError extends Error {
   status: number;
+
   message: string;
 
   constructor(status: number, message: string) {
@@ -9,15 +12,11 @@ class ExError extends Error {
   }
 
   static badRequest() {
-    return new ExError(400, "Invalid data sent");
+    return new ExError(BAD_REQUEST.code, BAD_REQUEST.message);
   }
 
-  static notFound(entity: string) {
-    return new ExError(404, `The requested ${entity} not found in database`);
-  }
-
-  static serverError() {
-    return new ExError(500, "Server side error");
+  static notFoundRequest() {
+    return new ExError(NOT_FOUND.code, NOT_FOUND.message);
   }
 }
 

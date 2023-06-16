@@ -1,16 +1,17 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { SERVER_ERROR } from "../constants/errorsStatus";
 
 const errorHandler = (
-  error: { status: number; message: any },
+  error: { status: number; message: string },
   req: Request,
   res: Response,
-  next: any
+  next: NextFunction,
 ) => {
-  const { status = 500, message } = error;
-
+  const { status = SERVER_ERROR.code, message } = error;
   res.status(status).send({
-    message: status === 500 ? "Server side error" : message,
+    message: status === SERVER_ERROR.code ? SERVER_ERROR.message : message,
   });
+  next();
 };
 
 export default errorHandler;

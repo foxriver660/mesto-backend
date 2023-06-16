@@ -1,12 +1,12 @@
-import ExError from "../errors/customError";
 import { NextFunction, Request, Response } from "express";
+import ExError from "../errors/CustomError";
 import { CustomRequest } from "../middleware/auth";
 import User from "../models/user";
 
 export const getUsersHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   User.find({})
     .select("-__v")
@@ -17,14 +17,18 @@ export const getUsersHandler = (
 export const postUsersHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
       /* throw new Error("Принудительная ошибка"); */
-      const { name, about, avatar, _id } = user;
-      res.send({ name, about, avatar, _id });
+      res.send({
+        name,
+        about,
+        avatar,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -38,7 +42,7 @@ export const postUsersHandler = (
 export const getSingleUserHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   User.findById(req.params.userId)
     .select("-__v")
@@ -48,7 +52,7 @@ export const getSingleUserHandler = (
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next(ExError.notFound("User"));
+        next(ExError.notFoundRequest());
       } else {
         next(err);
       }
@@ -58,7 +62,7 @@ export const getSingleUserHandler = (
 export const patchSingleUserHandler = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const _id = req.user?._id;
   const { name, about, avatar } = req.body;
@@ -68,12 +72,12 @@ export const patchSingleUserHandler = (
     {
       new: true,
       runValidators: true,
-    }
+    },
   )
     .select("-__v")
     .then((updatedUser) => {
       if (!updatedUser) {
-        throw ExError.notFound("User");
+        throw ExError.notFoundRequest();
       }
       /* throw new Error("Принудительная ошибка"); */
       res.send(updatedUser);
@@ -90,7 +94,7 @@ export const patchSingleUserHandler = (
 export const patchSingleUserAvatarHandler = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const _id = req.user?._id;
   const { avatar } = req.body;
@@ -100,13 +104,13 @@ export const patchSingleUserAvatarHandler = (
     {
       new: true,
       runValidators: true,
-    }
+    },
   )
     .select("-__v")
     .then((updatedUser) => {
-      /* throw new Error("Принудительная ошибка"); */
+      /*  throw new Error("Принудительная ошибка"); */
       if (!updatedUser) {
-        throw ExError.notFound("User");
+        throw ExError.notFoundRequest();
       }
       res.send(updatedUser);
     })
