@@ -1,14 +1,15 @@
-import { BAD_REQUEST, NOT_FOUND } from "../constants/errorsStatus";
+import {
+  BAD_REQUEST,
+  NOT_FOUND,
+  NOT_FOUND_PAGE,
+} from "../constants/errorsStatus";
 
 class ExError extends Error {
   status: number;
 
-  message: string;
-
   constructor(status: number, message: string) {
-    super();
+    super(message);
     this.status = status;
-    this.message = message;
   }
 
   static badRequest() {
@@ -17,6 +18,10 @@ class ExError extends Error {
 
   static notFoundRequest() {
     return new ExError(NOT_FOUND.code, NOT_FOUND.message);
+  }
+
+  static notFoundPageRequest() {
+    return new ExError(NOT_FOUND_PAGE.code, NOT_FOUND_PAGE.message);
   }
 }
 

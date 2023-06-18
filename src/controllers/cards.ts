@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ExError from "../errors/CustomError";
+import ExError from "../errors/ExError";
 import Card from "../models/card";
 import { CustomRequest } from "../middleware/auth";
 
@@ -11,7 +11,6 @@ export const getCardsHandler = (
   Card.find({})
     .select("-__v")
     .then((cards) => {
-      /* throw new Error("Принудительная ошибка"); */
       res.send(cards);
     })
     .catch(next);
@@ -34,7 +33,6 @@ export const postCardsHandler = (
     createdAt,
   })
     .then((card) => {
-      /* throw new Error("Принудительная ошибка"); */
       res.send(card);
     })
     .catch((err) => {
@@ -53,7 +51,6 @@ export const deleteCardsHandler = (
 ) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((result) => {
-      /* throw new Error("Принудительная ошибка"); */
       if (!result) {
         throw ExError.notFoundRequest();
       }
@@ -82,7 +79,6 @@ export const putCardLikeHandler = (
     { new: true },
   )
     .then((result) => {
-      /* throw new Error("Принудительная ошибка"); */
       if (!result) {
         throw ExError.notFoundRequest();
       }
@@ -111,7 +107,6 @@ export const deleteCardLikeHandler = (
     { new: true },
   )
     .then((result) => {
-      /* throw new Error("Принудительная ошибка"); */
       if (!result) {
         throw ExError.notFoundRequest();
       }

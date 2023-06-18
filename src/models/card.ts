@@ -1,4 +1,4 @@
-import mongoose, { model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 interface ICard {
   name: string;
@@ -30,12 +30,6 @@ const cardSchema = new Schema<ICard>(
       type: [Types.ObjectId],
       default: [],
       ref: "user",
-      validate: {
-        validator(v: any[]) {
-          return v.every((userId) => mongoose.Types.ObjectId.isValid(userId));
-        },
-        message: "Invalid user ID in likes array",
-      },
     },
     createdAt: {
       type: Date,
