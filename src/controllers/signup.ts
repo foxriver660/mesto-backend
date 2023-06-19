@@ -11,9 +11,13 @@ export const createUserHandler = (
   const {
     email, name, about, avatar,
   } = req.body;
-
-  bcrypt
-    .hash(req.body.password, 10)
+  User.findOne({ email })
+    .then((existingUser) => {
+      if (existingUser) {
+        throw ExError.conflict();
+      }
+      return bcrypt.hash(req.body.password, 10);
+    })
     .then((hash) => User.create({
       email,
       password: hash,

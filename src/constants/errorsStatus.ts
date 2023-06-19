@@ -20,4 +20,9 @@ export const NOT_FOUND_PAGE = {
   message:
     "The requested page was not found, please check if the input URL is correct",
 };
+export const CONFLICT_ERROR = {
+  code: 409,
+  message:
+    "Conflict has been detected with the current state of the target resource.",
+};
 export const SERVER_ERROR = { code: 500, message: "Server side error" };

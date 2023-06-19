@@ -50,6 +50,7 @@ export const deleteCardsHandler = (
   next: NextFunction,
 ) => {
   const ownerId = req.user?._id;
+
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
@@ -57,10 +58,11 @@ export const deleteCardsHandler = (
       }
       if (card.owner.toString() !== ownerId) {
         throw ExError.forbidden();
+      } else {
+        res.send({
+          message: "Card successfully deleted",
+        });
       }
-      res.send({
-        message: "Card successfully deleted",
-      });
     })
     .catch((err) => {
       if (err.name === "CastError") {

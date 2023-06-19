@@ -14,12 +14,10 @@ export const getUsersHandler = (
     .catch(next);
 };
 
-export const getSingleUserHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  User.findById(req.params.userId)
+// GET USER
+const getUser = (req: CustomRequest, res: Response, next: NextFunction) => {
+  const _id = req.params.userId || req.user?._id;
+  User.findById(_id)
     .select("-__v")
     .then((user) => {
       res.send(user);
@@ -32,7 +30,20 @@ export const getSingleUserHandler = (
       }
     });
 };
-// ОБНОВЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
+
+export const getSingleUserByIdHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => getUser(req, res, next);
+
+export const getSingleUserHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => getUser(req, res, next);
+
+// UPDATE USER
 const updateUser = (
   update: { name?: string; about?: string; avatar?: string },
   req: CustomRequest,

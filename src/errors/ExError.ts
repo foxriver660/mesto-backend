@@ -1,6 +1,7 @@
 import {
   AUTHORISATION_ERROR,
   BAD_REQUEST,
+  CONFLICT_ERROR,
   FORBIDDEN_ERROR,
   NOT_FOUND,
   NOT_FOUND_PAGE,
@@ -32,6 +33,10 @@ class ExError extends Error {
 
   static notFoundPageRequest() {
     return new ExError(NOT_FOUND_PAGE.code, NOT_FOUND_PAGE.message);
+  }
+
+  static conflict() {
+    return new ExError(CONFLICT_ERROR.code, CONFLICT_ERROR.message);
   }
 }
 
