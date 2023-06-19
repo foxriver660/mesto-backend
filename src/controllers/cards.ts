@@ -45,14 +45,18 @@ export const postCardsHandler = (
 };
 
 export const deleteCardsHandler = (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
+  const ownerId = req.user?._id;
   Card.findByIdAndRemove(req.params.cardId)
-    .then((result) => {
-      if (!result) {
+    .then((card) => {
+      if (!card) {
         throw ExError.notFoundRequest();
+      }
+      if (card.owner.toString() !== ownerId) {
+        throw ExError.forbidden();
       }
       res.send({
         message: "Card successfully deleted",

@@ -14,30 +14,6 @@ export const getUsersHandler = (
     .catch(next);
 };
 
-export const postUsersHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => {
-      res.send({
-        name,
-        about,
-        avatar,
-        _id: user._id,
-      });
-    })
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(ExError.badRequest());
-      } else {
-        next(err);
-      }
-    });
-};
-
 export const getSingleUserHandler = (
   req: Request,
   res: Response,
