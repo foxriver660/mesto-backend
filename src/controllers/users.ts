@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ExError from "../errors/ExError";
 import { CustomRequest } from "../middleware/auth";
 import User from "../models/user";
+import { ERROR } from "../constants/errorsStatus";
 
 export const getUsersHandler = (
   req: Request,
@@ -20,15 +21,12 @@ const getUser = (req: CustomRequest, res: Response, next: NextFunction) => {
   User.findById(_id)
     .select("-__v")
     .then((user) => {
+      if (!user) {
+        throw ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND);
+      }
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(ExError.notFoundRequest());
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 export const getSingleUserByIdHandler = (
@@ -55,7 +53,7 @@ const updateUser = (
     .select("-__v")
     .then((updatedUser) => {
       if (!updatedUser) {
-        throw ExError.notFoundRequest();
+        throw ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND);
       }
 
       res.send(updatedUser);

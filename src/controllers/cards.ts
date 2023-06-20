@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ExError from "../errors/ExError";
 import Card from "../models/card";
 import { CustomRequest } from "../middleware/auth";
+import { ERROR } from "../constants/errorsStatus";
 
 export const getCardsHandler = (
   req: Request,
@@ -22,15 +23,11 @@ export const postCardsHandler = (
   next: NextFunction,
 ) => {
   const ownerId = req.user?._id;
-  const {
-    name, link, likes, createdAt,
-  } = req.body;
+  const { name, link } = req.body;
   Card.create({
     name,
     link,
     owner: ownerId,
-    likes,
-    createdAt,
   })
     .then((card) => {
       res.send(card);
@@ -53,7 +50,7 @@ export const deleteCardsHandler = (
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw ExError.notFoundRequest();
+        throw ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND);
       }
       if (card.owner.toString() !== ownerId) {
         throw ExError.forbidden();
@@ -68,7 +65,7 @@ export const deleteCardsHandler = (
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next(ExError.notFoundRequest());
+        next(ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND));
       } else {
         next(err);
       }
@@ -90,7 +87,7 @@ const toggleCardLike = (
   )
     .then((result) => {
       if (!result) {
-        throw ExError.notFoundRequest();
+        throw ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND);
       }
       res.send({
         message: `Like successfully ${addLike ? "added" : "removed"}`,
