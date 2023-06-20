@@ -1,14 +1,27 @@
-export const BAD_REQUEST = {
-  code: 400,
-  message: "incorrect data in the request",
+const ErrorCode = {
+  BAD_REQUEST: 400,
+  AUTHORISATION: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  NOT_FOUND_PAGE: 404,
+  CONFLICT: 409,
+  SERVER: 500,
 };
-export const NOT_FOUND = {
-  code: 404,
-  message: "The requested entity not found in database",
-};
-export const NOT_FOUND_PAGE = {
-  code: 404,
-  message:
+
+const ErrorMessage = {
+  BAD_REQUEST: "Incorrect data in the request",
+  AUTHORISATION:
+    "Error! Access to the requested resource is denied. Please login or check your permissions and try again",
+  FORBIDDEN: "You do not have permission to delete this card",
+  NOT_FOUND: "The requested entity not found in database",
+  NOT_FOUND_PAGE:
     "The requested page was not found, please check if the input URL is correct",
+  CONFLICT:
+    "Conflict has been detected with the current state of the target resource.",
+  SERVER: "Server side error",
 };
-export const SERVER_ERROR = { code: 500, message: "Server side error" };
+
+export const ERROR = {
+  CODE: ErrorCode,
+  MESSAGE: ErrorMessage,
+};

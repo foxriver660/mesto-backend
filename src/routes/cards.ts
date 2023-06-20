@@ -1,5 +1,9 @@
 import express from "express";
 import {
+  createCardValidation,
+  CardIdValidation,
+} from "../validation/cardValidation";
+import {
   getCardsHandler,
   postCardsHandler,
   deleteCardsHandler,
@@ -10,9 +14,9 @@ import {
 const router = express.Router();
 
 router.get("/", getCardsHandler);
-router.post("/", postCardsHandler);
-router.delete("/:cardId", deleteCardsHandler);
-router.put("/:cardId/likes", putCardLikeHandler);
-router.delete("/:cardId/likes", deleteCardLikeHandler);
+router.post("/", createCardValidation, postCardsHandler);
+router.delete("/:cardId", CardIdValidation, deleteCardsHandler);
+router.put("/:cardId/likes", CardIdValidation, putCardLikeHandler);
+router.delete("/:cardId/likes", CardIdValidation, deleteCardLikeHandler);
 
 export default router;

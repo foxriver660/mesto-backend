@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import { urlPattern } from "../constants/patterns";
 
 interface ICard {
   name: string;
@@ -19,7 +20,7 @@ const cardSchema = new Schema<ICard>(
     link: {
       type: String,
       required: true,
-      match: /^https?:\/\/.+/,
+      match: urlPattern,
     },
     owner: {
       type: Schema.Types.ObjectId,

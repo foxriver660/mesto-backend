@@ -45,17 +45,25 @@ export const postCardsHandler = (
 };
 
 export const deleteCardsHandler = (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((result) => {
-      if (!result) {
+  const ownerId = req.user?._id;
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
         throw ExError.notFoundRequest();
       }
+      if (card.owner.toString() !== ownerId) {
+        throw ExError.forbidden();
+      }
+      return Card.findByIdAndRemove(req.params.cardId);
+    })
+    .then((card) => {
       res.send({
         message: "Card successfully deleted",
+        data: card,
       });
     })
     .catch((err) => {
@@ -67,7 +75,9 @@ export const deleteCardsHandler = (
     });
 };
 
-export const putCardLikeHandler = (
+// РАБОТА С ЛАЙКАМИ
+const toggleCardLike = (
+  addLike: any,
   req: CustomRequest,
   res: Response,
   next: NextFunction,
@@ -75,7 +85,7 @@ export const putCardLikeHandler = (
   const ownerId = req.user?._id;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: ownerId } },
+    addLike ? { $addToSet: { likes: ownerId } } : { $pull: { likes: ownerId } },
     { new: true },
   )
     .then((result) => {
@@ -83,7 +93,7 @@ export const putCardLikeHandler = (
         throw ExError.notFoundRequest();
       }
       res.send({
-        message: "Like successfully added",
+        message: `Like successfully ${addLike ? "added" : "removed"}`,
       });
     })
     .catch((err) => {
@@ -95,30 +105,14 @@ export const putCardLikeHandler = (
     });
 };
 
+export const putCardLikeHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => toggleCardLike(true, req, res, next);
+
 export const deleteCardLikeHandler = (
   req: CustomRequest,
   res: Response,
   next: NextFunction,
-) => {
-  const ownerId = req.user?._id;
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: ownerId } },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        throw ExError.notFoundRequest();
-      }
-      res.send({
-        message: "Like successfully removed",
-      });
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(ExError.badRequest());
-      } else {
-        next(err);
-      }
-    });
-};
+) => toggleCardLike(false, req, res, next);
