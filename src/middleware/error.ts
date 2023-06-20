@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-
 import { ERROR } from "../constants/errorsStatus";
+
+/* const pageErrorHandler = (req: Request, res: Response, next: NextFunction) => {
+  next(ExError.notFoundPageRequest());
+}; */
 
 const errorHandler = (
   error: { status: number; message: string },
@@ -15,4 +18,4 @@ const errorHandler = (
   next();
 };
 
-export default errorHandler;
+export { errorHandler };

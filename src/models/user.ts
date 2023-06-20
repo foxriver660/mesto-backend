@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import ExError from "../errors/ExError";
+import { urlPattern } from "../constants/patterns";
 
 interface IUser {
   email: string;
@@ -50,7 +51,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   avatar: {
     type: String,
-    match: /^https?:\/\/.+/,
+    match: urlPattern,
     default:
       "https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png",
   },

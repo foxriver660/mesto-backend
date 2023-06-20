@@ -50,19 +50,21 @@ export const deleteCardsHandler = (
   next: NextFunction,
 ) => {
   const ownerId = req.user?._id;
-
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw ExError.notFoundRequest();
       }
       if (card.owner.toString() !== ownerId) {
         throw ExError.forbidden();
-      } else {
-        res.send({
-          message: "Card successfully deleted",
-        });
       }
+      return Card.findByIdAndRemove(req.params.cardId);
+    })
+    .then((card) => {
+      res.send({
+        message: "Card successfully deleted",
+        data: card,
+      });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -73,8 +75,7 @@ export const deleteCardsHandler = (
     });
 };
 
-// !ОТРЕФАКТОРИТЬ ЭТИ ДВА КОНТРОЛЛЕРА
-
+// РАБОТА С ЛАЙКАМИ
 const toggleCardLike = (
   addLike: any,
   req: CustomRequest,
@@ -92,7 +93,7 @@ const toggleCardLike = (
         throw ExError.notFoundRequest();
       }
       res.send({
-        message: "Like successfully added",
+        message: `Like successfully ${addLike ? "added" : "removed"}`,
       });
     })
     .catch((err) => {
@@ -115,60 +116,3 @@ export const deleteCardLikeHandler = (
   res: Response,
   next: NextFunction,
 ) => toggleCardLike(false, req, res, next);
-
-/* export const putCardLikeHandler = (
-
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const ownerId = req.user?._id;
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: ownerId } },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        throw ExError.notFoundRequest();
-      }
-      res.send({
-        message: "Like successfully added",
-      });
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(ExError.badRequest());
-      } else {
-        next(err);
-      }
-    });
-};
-
-export const deleteCardLikeHandler = (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const ownerId = req.user?._id;
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: ownerId } },
-    { new: true },
-  )
-    .then((result) => {
-      if (!result) {
-        throw ExError.notFoundRequest();
-      }
-      res.send({
-        message: "Like successfully removed",
-      });
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(ExError.badRequest());
-      } else {
-        next(err);
-      }
-    });
-}; */

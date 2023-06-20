@@ -11,13 +11,10 @@ export const createUserHandler = (
   const {
     email, name, about, avatar,
   } = req.body;
-  User.findOne({ email })
-    .then((existingUser) => {
-      if (existingUser) {
-        throw ExError.conflict();
-      }
-      return bcrypt.hash(req.body.password, 10);
-    })
+
+  bcrypt
+    .hash(req.body.password, 10)
+
     .then((hash) => User.create({
       email,
       password: hash,
@@ -38,6 +35,8 @@ export const createUserHandler = (
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(ExError.badRequest());
+      } else if (err.code === 11000) {
+        next(ExError.conflict());
       } else {
         next(err);
       }

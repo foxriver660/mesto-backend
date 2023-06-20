@@ -15,8 +15,6 @@ export const loginHandler = (
       const token = jwt.sign({ _id: user._id }, "secret", {
         expiresIn: "7d",
       });
-
-      // вернём токен
       res.cookie("token", token, { httpOnly: true });
       res.send({ message: "You are successfully logged in" });
     })
