@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-import ExError from "../errors/ExError";
 
 export const loginHandler = (
   req: Request,
@@ -18,11 +17,5 @@ export const loginHandler = (
       res.cookie("token", token, { httpOnly: true });
       res.send({ message: "You are successfully logged in" });
     })
-    .catch((err) => {
-      if (err) {
-        next(ExError.unauthorized());
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };

@@ -4,8 +4,8 @@ import { urlPattern } from "../constants/patterns";
 
 export const createCardValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    link: Joi.string().required().pattern(urlPattern),
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().required().pattern(urlPattern).required(),
   }),
 });
 

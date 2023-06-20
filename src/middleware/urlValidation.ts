@@ -1,7 +1,7 @@
-/* eslint-disable no-restricted-syntax */
 import { NextFunction, Request, Response } from "express";
 import ExError from "../errors/ExError";
 import { ValidUrl } from "../constants/validUrl";
+import { ERROR } from "../constants/errorsStatus";
 
 const isValidUrl = (url: string) => Object.values(ValidUrl).some((value) => {
   if (value instanceof RegExp) {
@@ -9,7 +9,7 @@ const isValidUrl = (url: string) => Object.values(ValidUrl).some((value) => {
   }
   return value === url;
 });
-export const validateUrl = (
+export const preValidateUrl = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -17,7 +17,7 @@ export const validateUrl = (
   const url = req.originalUrl;
 
   if (!isValidUrl(url)) {
-    throw ExError.notFoundPageRequest();
+    return next(ExError.notFoundRequest(ERROR.MESSAGE.NOT_FOUND_PAGE));
   }
 
   next();

@@ -20,12 +20,8 @@ class ExError extends Error {
     return new ExError(ERROR.CODE.FORBIDDEN, ERROR.MESSAGE.FORBIDDEN);
   }
 
-  static notFoundRequest() {
-    return new ExError(ERROR.CODE.NOT_FOUND, ERROR.MESSAGE.NOT_FOUND);
-  }
-
-  static notFoundPageRequest() {
-    return new ExError(ERROR.CODE.NOT_FOUND_PAGE, ERROR.MESSAGE.NOT_FOUND_PAGE);
+  static notFoundRequest(message: string) {
+    return new ExError(ERROR.CODE.NOT_FOUND, message);
   }
 
   static conflict() {
