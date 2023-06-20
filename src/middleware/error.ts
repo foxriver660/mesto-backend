@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { SERVER_ERROR } from "../constants/errorsStatus";
+import { ERROR } from "../constants/errorsStatus";
 
 const errorHandler = (
   error: { status: number; message: string },
@@ -8,9 +8,9 @@ const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  const { status = SERVER_ERROR.code, message } = error;
+  const { status = ERROR.CODE.SERVER, message } = error;
   res.status(status).send({
-    message: status === SERVER_ERROR.code ? SERVER_ERROR.message : message,
+    message: status === ERROR.CODE.SERVER ? ERROR.MESSAGE.SERVER : message,
   });
   next();
 };

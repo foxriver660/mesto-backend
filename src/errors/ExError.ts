@@ -1,11 +1,4 @@
-import {
-  AUTHORISATION_ERROR,
-  BAD_REQUEST,
-  CONFLICT_ERROR,
-  FORBIDDEN_ERROR,
-  NOT_FOUND,
-  NOT_FOUND_PAGE,
-} from "../constants/errorsStatus";
+import { ERROR } from "../constants/errorsStatus";
 
 class ExError extends Error {
   status: number;
@@ -16,27 +9,27 @@ class ExError extends Error {
   }
 
   static badRequest() {
-    return new ExError(BAD_REQUEST.code, BAD_REQUEST.message);
+    return new ExError(ERROR.CODE.BAD_REQUEST, ERROR.MESSAGE.BAD_REQUEST);
   }
 
   static unauthorized() {
-    return new ExError(AUTHORISATION_ERROR.code, AUTHORISATION_ERROR.message);
+    return new ExError(ERROR.CODE.AUTHORISATION, ERROR.MESSAGE.AUTHORISATION);
   }
 
   static forbidden() {
-    return new ExError(FORBIDDEN_ERROR.code, FORBIDDEN_ERROR.message);
+    return new ExError(ERROR.CODE.FORBIDDEN, ERROR.MESSAGE.FORBIDDEN);
   }
 
   static notFoundRequest() {
-    return new ExError(NOT_FOUND.code, NOT_FOUND.message);
+    return new ExError(ERROR.CODE.NOT_FOUND, ERROR.MESSAGE.NOT_FOUND);
   }
 
   static notFoundPageRequest() {
-    return new ExError(NOT_FOUND_PAGE.code, NOT_FOUND_PAGE.message);
+    return new ExError(ERROR.CODE.NOT_FOUND_PAGE, ERROR.MESSAGE.NOT_FOUND_PAGE);
   }
 
   static conflict() {
-    return new ExError(CONFLICT_ERROR.code, CONFLICT_ERROR.message);
+    return new ExError(ERROR.CODE.CONFLICT, ERROR.MESSAGE.CONFLICT);
   }
 }
 

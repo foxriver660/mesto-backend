@@ -73,7 +73,51 @@ export const deleteCardsHandler = (
     });
 };
 
+// !ОТРЕФАКТОРИТЬ ЭТИ ДВА КОНТРОЛЛЕРА
+
+const toggleCardLike = (
+  addLike: any,
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const ownerId = req.user?._id;
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    addLike ? { $addToSet: { likes: ownerId } } : { $pull: { likes: ownerId } },
+    { new: true },
+  )
+    .then((result) => {
+      if (!result) {
+        throw ExError.notFoundRequest();
+      }
+      res.send({
+        message: "Like successfully added",
+      });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        next(ExError.badRequest());
+      } else {
+        next(err);
+      }
+    });
+};
+
 export const putCardLikeHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => toggleCardLike(true, req, res, next);
+
+export const deleteCardLikeHandler = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => toggleCardLike(false, req, res, next);
+
+/* export const putCardLikeHandler = (
+
   req: CustomRequest,
   res: Response,
   next: NextFunction,
@@ -127,4 +171,4 @@ export const deleteCardLikeHandler = (
         next(err);
       }
     });
-};
+}; */

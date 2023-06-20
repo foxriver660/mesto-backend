@@ -1,5 +1,10 @@
 import express from "express";
 import {
+  userIdValidation,
+  patchSingleUserAvatarValidation,
+  patchSingleUserValidation,
+} from "../validation/userValidation";
+import {
   getUsersHandler,
   getSingleUserByIdHandler,
   getSingleUserHandler,
@@ -11,8 +16,12 @@ const router = express.Router();
 
 router.get("/", getUsersHandler);
 router.get("/me", getSingleUserHandler);
-router.get("/:userId", getSingleUserByIdHandler);
-router.patch("/me", patchSingleUserHandler);
-router.patch("/me/avatar", patchSingleUserAvatarHandler);
+router.get("/:userId", userIdValidation, getSingleUserByIdHandler);
+router.patch("/me", patchSingleUserValidation, patchSingleUserHandler);
+router.patch(
+  "/me/avatar",
+  patchSingleUserAvatarValidation,
+  patchSingleUserAvatarHandler,
+);
 
 export default router;
